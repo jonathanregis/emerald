@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { compareSync } from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {

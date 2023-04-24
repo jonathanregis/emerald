@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { User } from './users.model';
 import { CreateUserDto } from './create-user.dto';
 import { Response } from 'express';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Public } from 'src/common/decorators/Public';
 
 @Controller('users')
 export class UsersController {
