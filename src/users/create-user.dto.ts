@@ -4,6 +4,8 @@ import {
   IsAlpha,
   IsStrongPassword,
   IsNotEmpty,
+  IsEnum,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -23,4 +25,8 @@ export class CreateUserDto {
   @IsStrongPassword()
   @IsNotEmpty()
   password: string;
+
+  @IsEnum({ admin: 'admin', customer: 'customer' })
+  @IsOptional()
+  role: 'admin' | 'customer';
 }

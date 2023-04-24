@@ -14,7 +14,7 @@ export const databaseProviders = [
         database: 'emerald',
       });
       sequelize.addModels([User]);
-      await sequelize.sync({ force: true });
+      await sequelize.sync();
       return sequelize;
     },
   },

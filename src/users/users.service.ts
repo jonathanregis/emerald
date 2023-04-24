@@ -10,4 +10,15 @@ export class UsersService {
   async findAll(): Promise<User[] | undefined> {
     return this.usersRepo.findAll<User>();
   }
+
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.usersRepo
+      .scope('withPass')
+      .findAll({ where: { email }, limit: 1 });
+    if (user.length) {
+      return user[0];
+    } else {
+      return null;
+    }
+  }
 }

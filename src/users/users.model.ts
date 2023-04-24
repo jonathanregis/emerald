@@ -5,9 +5,22 @@ import {
   Unique,
   BeforeUpsert,
   BeforeCreate,
+  Default,
+  DefaultScope,
+  Scopes,
 } from 'sequelize-typescript';
 import { hash } from 'bcrypt';
 
+@Scopes({
+  withPass: {
+    attributes: {
+      include: ['password'],
+    },
+  },
+})
+@DefaultScope({
+  attributes: { exclude: ['password'] },
+})
 @Table
 export class User extends Model<User> {
   @Column
@@ -25,6 +38,10 @@ export class User extends Model<User> {
 
   @Column
   password: string;
+
+  @Default('customer')
+  @Column
+  role: 'customer' | 'admin';
 
   @BeforeCreate
   static async hashPassword(user: User) {
