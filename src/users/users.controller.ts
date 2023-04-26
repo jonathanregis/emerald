@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Req,
   Res,
@@ -29,9 +30,9 @@ export class UsersController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string, @Req() req: Request) {
-    const requestUser = this.authService.getRequestUser(req);
-    if (requestUser?.sub === parseInt(id) || requestUser.role === 'admin') {
+  getById(@Param('id', ParseIntPipe) id: string, @Req() req: Request) {
+    const requestUser = req['user'];
+    if (requestUser?.sub === id || requestUser.role === 'admin') {
       return this.userRepo.getById(id);
     } else {
       throw new UnauthorizedException();
