@@ -8,6 +8,7 @@ import {
   Default,
   DefaultScope,
   Scopes,
+  HasMany,
 } from 'sequelize-typescript';
 import { hash } from 'bcrypt';
 
@@ -20,6 +21,7 @@ import { hash } from 'bcrypt';
 })
 @DefaultScope({
   attributes: { exclude: ['password'] },
+  where: { active: true },
 })
 @Table
 export class User extends Model<User> {
@@ -42,6 +44,10 @@ export class User extends Model<User> {
   @Default('customer')
   @Column
   role: 'customer' | 'admin';
+
+  @Default(true)
+  @Column
+  active: boolean;
 
   @BeforeCreate
   static async hashPassword(user: User) {

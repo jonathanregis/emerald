@@ -2,11 +2,13 @@ import { Body, Controller, Post, Res } from '@nestjs/common';
 import { SignInDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { Public } from 'src/common/decorators/Public';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('/login')
   async login(@Body() signInDto: SignInDto, @Res() res: Response) {
     const token = await this.authService.signIn(

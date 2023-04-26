@@ -1,22 +1,44 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from './users.model';
 import { CreateUserDto } from './create-user.dto';
-import { Response } from 'express';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Public } from 'src/common/decorators/Public';
+import { Request, Response } from 'express';
+import { UsersService } from './users.service';
+import { Admin } from 'src/common/decorators/Admin';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('users')
 export class UsersController {
+  constructor(
+    private userRepo: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  @Admin()
   @Get('/')
   getAll() {
-    return User.findAll();
+    return this.userRepo.getAll();
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    return User.findOne({ where: { id } });
+  getById(@Param('id') id: string, @Req() req: Request) {
+    const requestUser = this.authService.getRequestUser(req);
+    if (requestUser?.sub === parseInt(id) || requestUser.role === 'admin') {
+      return this.userRepo.getById(id);
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 
+  @Admin()
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
