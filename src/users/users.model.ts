@@ -11,6 +11,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { hash } from 'bcrypt';
+import { Item } from 'src/shipment/item.model';
 
 @Scopes({
   withPass: {
@@ -48,6 +49,9 @@ export class User extends Model<User> {
   @Default(true)
   @Column
   active: boolean;
+
+  @HasMany(() => Item)
+  items: Item[];
 
   @BeforeCreate
   static async hashPassword(user: User) {

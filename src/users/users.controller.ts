@@ -30,10 +30,30 @@ export class UsersController {
   }
 
   @Get(':id')
-  getById(@Param('id', ParseIntPipe) id: string, @Req() req: Request) {
+  getById(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
     const requestUser = req['user'];
     if (requestUser?.sub === id || requestUser.role === 'admin') {
       return this.userRepo.getById(id);
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
+
+  @Get(':id/shipments')
+  getShipments(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const requestUser = req['user'];
+    if (requestUser?.sub === id || requestUser.role === 'admin') {
+      return this.userRepo.getShipments(id);
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
+
+  @Get(':id/items')
+  getItems(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const requestUser = req['user'];
+    if (requestUser?.sub === id || requestUser.role === 'admin') {
+      return this.userRepo.getItems(id);
     } else {
       throw new UnauthorizedException();
     }

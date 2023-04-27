@@ -1,4 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
+import { Item } from 'src/shipment/item.model';
+import { Shipment } from 'src/shipment/shipment.model';
 import { User } from 'src/users/users.model';
 
 export const databaseProviders = [
@@ -13,7 +15,7 @@ export const databaseProviders = [
         password: 'root',
         database: 'emerald',
       });
-      sequelize.addModels([User]);
+      sequelize.addModels([User, Shipment, Item]);
       await sequelize.sync();
       return sequelize;
     },
