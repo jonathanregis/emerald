@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { jwt } from './config';
+import { InvoiceModule } from './invoice/invoice.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { jwt } from './config';
     UsersModule,
     AuthModule,
     DatabaseModule,
+    InvoiceModule,
   ],
 })
 export class AppModule {}
