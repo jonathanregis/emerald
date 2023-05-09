@@ -9,9 +9,12 @@ import {
   DefaultScope,
   Scopes,
   HasMany,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { hash } from 'bcrypt';
 import { Item } from 'src/shipment/item.model';
+import { Invoice } from 'src/invoice/entities/invoice.model';
+import { Shipment } from 'src/shipment/shipment.model';
 
 @Scopes({
   withPass: {
@@ -52,6 +55,9 @@ export class User extends Model<User> {
 
   @HasMany(() => Item)
   items: Item[];
+
+  @HasMany(() => Invoice)
+  invoices: Invoice[];
 
   @BeforeCreate
   static async hashPassword(user: User) {

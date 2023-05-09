@@ -27,7 +27,21 @@ export class ShipmentService {
 
   async addItem(createItemDto: CreateItemDto): Promise<Item | undefined> {
     try {
-      return await Item.create(createItemDto);
+      const item = await Item.create(createItemDto).catch((e) =>
+        console.log(e),
+      );
+      if (item) return item;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async getOne(id: number): Promise<Shipment | undefined> {
+    try {
+      return await Shipment.findOne({
+        where: { id },
+        include: [{ all: true, nested: true }],
+      });
     } catch (e) {
       throw e;
     }

@@ -1,4 +1,10 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateItemDto {
   @IsString()
@@ -12,5 +18,17 @@ export class CreateItemDto {
 
   @IsOptional()
   @IsNumber()
-  shipmentId: number;
+  shipmentId?: number;
+
+  @ValidateIf((o) => !o.cbm)
+  @IsNumber()
+  bal?: number;
+
+  @ValidateIf((o) => !o.bal)
+  @IsNumber()
+  cbm?: number;
+
+  @IsNumber()
+  @IsOptional()
+  unitPrice?: number;
 }

@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { Shipment } from './shipment.model';
 import { User } from 'src/users/users.model';
+import { Invoice } from 'src/invoice/entities/invoice.model';
 
 @Table
 export class Item extends Model<Item> {
@@ -27,11 +28,19 @@ export class Item extends Model<Item> {
   @Column
   shipmentId: number;
 
+  @ForeignKey(() => Invoice)
+  @AllowNull
+  @Column
+  invoiceId: number;
+
   @BelongsTo(() => Shipment, 'shipmentId')
   shipment: Shipment;
 
   @BelongsTo(() => User, 'userId')
   user: User;
+
+  @BelongsTo(() => Invoice, 'invoiceId')
+  invoice: Invoice;
 
   @AllowNull
   @Column

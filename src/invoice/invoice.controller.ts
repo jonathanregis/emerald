@@ -1,15 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+} from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { Response } from 'express';
 
 @Controller('invoice')
 export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) {}
 
   @Post()
-  create(@Body() createInvoiceDto: CreateInvoiceDto) {
-    return this.invoiceService.create(createInvoiceDto);
+  async create(
+    @Body() createInvoiceDto: CreateInvoiceDto,
+    @Res() res: Response,
+  ) {
+    const generatedInvoices = await this.invoiceService.create(
+      createInvoiceDto,
+    );
+    res.status(201).json({
+      message:
+        'Invoices are being generated, a notification will be sent when done.',
+      invoiceCount: generatedInvoices.invoiceCount,
+    });
   }
 
   @Get()

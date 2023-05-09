@@ -77,4 +77,15 @@ export class ShipmentController {
       throw e;
     }
   }
+
+  @Admin()
+  @Get(':id')
+  async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    try {
+      const shipment = await this.shipmentService.getOne(id);
+      res.status(200).json(shipment);
+    } catch (e) {
+      throw e;
+    }
+  }
 }

@@ -1,6 +1,14 @@
-import { Column, Default, HasMany, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  Default,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Item } from './item.model';
 import { User } from 'src/users/users.model';
+import { Invoice } from 'src/invoice/entities/invoice.model';
 
 @Table
 export class Shipment extends Model<Shipment> {
@@ -37,4 +45,14 @@ export class Shipment extends Model<Shipment> {
 
   @HasMany(() => Item)
   items: Item[];
+
+  get users() {
+    const users = [];
+    this.items.forEach((item) => {
+      if (!users.find((x) => x.id === item.userId)) {
+        users.push(item.user);
+      }
+    });
+    return users;
+  }
 }

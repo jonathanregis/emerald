@@ -15,6 +15,7 @@ import { Request, Response } from 'express';
 import { UsersService } from './users.service';
 import { Admin } from 'src/common/decorators/Admin';
 import { AuthService } from 'src/auth/auth.service';
+import { Public } from 'src/common/decorators/Public';
 
 @Controller('users')
 export class UsersController {
@@ -59,7 +60,7 @@ export class UsersController {
     }
   }
 
-  @Admin()
+  @Public()
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
