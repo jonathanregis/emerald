@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { Item } from 'src/shipment/item.model';
 import { Shipment } from 'src/shipment/shipment.model';
+import { Transaction } from 'src/transaction/entities/transaction.entity';
 import { User } from 'src/users/users.model';
 
 @Table
@@ -34,12 +35,22 @@ export class Invoice extends Model<Invoice> {
   @HasMany(() => Item, 'invoiceId')
   items: Item[];
 
+  @HasMany(() => Transaction, 'invoiceId')
+  transactions: Transaction[];
+
   @Column
   dueDate: Date;
 
-  @Default(0)
-  @Column
-  amountPaid: number;
+  @Column(DataType.VIRTUAL)
+  get amountPaid() {
+    const amounts = this.getDataValue('transactions')?.map((t) => {
+      return t.amount;
+    });
+    if (amounts) {
+      return amounts.reduce((prev, curr) => prev + curr, 0);
+    }
+    return 0;
+  }
 
   @Default(null)
   @Column

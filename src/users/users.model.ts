@@ -22,6 +22,14 @@ import { Shipment } from 'src/shipment/shipment.model';
       include: ['password'],
     },
   },
+  admin: {
+    attributes: {
+      exclude: ['password'],
+    },
+    where: {
+      role: 'admin',
+    },
+  },
 })
 @DefaultScope({
   attributes: { exclude: ['password'] },

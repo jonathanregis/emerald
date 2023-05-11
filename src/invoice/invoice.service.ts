@@ -46,7 +46,7 @@ export class InvoiceService {
   }
 
   async findAll() {
-    return await Invoice.findAll({ include: ['items'] });
+    return await Invoice.findAll({ include: ['items', 'transactions'] });
   }
 
   findOne(id: number) {

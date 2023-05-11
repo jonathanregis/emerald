@@ -9,8 +9,13 @@ export class UsersService {
     @Inject('USER_REPO')
     private usersRepo: typeof User,
   ) {}
+
   async getAll(): Promise<User[] | undefined> {
     return this.usersRepo.findAll<User>();
+  }
+
+  async getAdmins(): Promise<User[]> {
+    return this.usersRepo.scope('admin').findAll();
   }
 
   async getByEmail(email: string): Promise<User | undefined> {

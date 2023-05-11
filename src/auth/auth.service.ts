@@ -6,7 +6,7 @@ import { Request } from 'express';
 
 export type AuthUserType = {
   role: 'admin' | 'customer';
-  sub: string | number;
+  sub: number;
   email: string;
 };
 
