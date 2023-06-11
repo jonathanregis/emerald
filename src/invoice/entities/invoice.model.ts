@@ -1,3 +1,4 @@
+import { VIRTUAL } from 'sequelize';
 import {
   BelongsTo,
   Column,
@@ -13,7 +14,9 @@ import { Shipment } from 'src/shipment/shipment.model';
 import { Transaction } from 'src/transaction/entities/transaction.entity';
 import { User } from 'src/users/users.model';
 
-@Table
+@Table({
+  paranoid: true,
+})
 export class Invoice extends Model<Invoice> {
   @Column
   amount: number;
@@ -59,6 +62,14 @@ export class Invoice extends Model<Invoice> {
   @Default(0)
   @Column
   tax: number;
+
+  @Column(DataType.VIRTUAL)
+  get number() {
+    const date = new Date(this.getDataValue('createdAt'));
+    const part1 = date.getFullYear().toString().substr(2, 2);
+    const part2 = (date.getMonth() + 1).toString().padStart(2, '0');
+    return part1 + this.getDataValue('id').toString().padStart(2, '0') + part2;
+  }
 
   @Column(DataType.VIRTUAL)
   get balance() {

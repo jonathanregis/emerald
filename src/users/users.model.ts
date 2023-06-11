@@ -15,6 +15,7 @@ import { hash } from 'bcrypt';
 import { Item } from 'src/shipment/item.model';
 import { Invoice } from 'src/invoice/entities/invoice.model';
 import { Shipment } from 'src/shipment/shipment.model';
+import { Op } from 'sequelize';
 
 @Scopes({
   withPass: {
@@ -30,10 +31,15 @@ import { Shipment } from 'src/shipment/shipment.model';
       role: 'admin',
     },
   },
+  allRoles: {
+    where: {
+      role: { [Op.or]: ['customer', 'admin'] },
+    },
+  },
 })
 @DefaultScope({
   attributes: { exclude: ['password'] },
-  where: { active: true },
+  where: { active: true, role: 'customer' },
 })
 @Table
 export class User extends Model<User> {

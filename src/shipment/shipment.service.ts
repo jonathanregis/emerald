@@ -36,6 +36,14 @@ export class ShipmentService {
     }
   }
 
+  async deleteItem(id: number) {
+    try {
+      return await Item.destroy({ where: { id } });
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async getOne(id: number): Promise<Shipment | undefined> {
     try {
       return await Shipment.findOne({

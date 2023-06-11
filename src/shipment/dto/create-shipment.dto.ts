@@ -5,6 +5,7 @@ import {
   IsAlpha,
   Length,
   IsDateString,
+  IsString,
 } from 'class-validator';
 import { ContainerTypes, ShipmentStatus } from 'src/types';
 
@@ -35,9 +36,9 @@ export class CreateShipmentDto {
   @Length(2, 2)
   arrivalCountry: string;
 
-  @IsAlpha()
+  @IsString()
   departureCity: string;
 
-  @IsAlpha()
+  @IsString()
   arrivalCity: string;
 }

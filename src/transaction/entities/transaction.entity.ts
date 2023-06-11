@@ -7,7 +7,9 @@ import {
 } from 'sequelize-typescript';
 import { User } from 'src/users/users.model';
 
-@Table
+@Table({
+  paranoid: true,
+})
 export class Transaction extends Model<Transaction> {
   @Column
   type: string;

@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './entities/invoice.model';
 import { ShipmentService } from 'src/shipment/shipment.service';
 import { User } from 'src/users/users.model';
 import { Item } from 'src/shipment/item.model';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class InvoiceService {
-  constructor(private shipmentService: ShipmentService) {}
+  constructor(
+    private shipmentService: ShipmentService,
+    private notificationService: NotificationService,
+  ) {}
 
   async create(createInvoiceDto: CreateInvoiceDto) {
     try {
@@ -32,11 +35,25 @@ export class InvoiceService {
             amount: amount,
           }).then((invoice) => {
             invoice.$set('items', userItems);
-            // notify user
+            this.notificationService.notify({
+              message:
+                'Invoice ' +
+                invoice.number +
+                ' received for shipment ' +
+                createInvoiceDto.shipmentId,
+              title: 'New invoice',
+              to: [invoice.userId],
+            });
           });
         }),
       ).then((message) => {
-        // notify admin
+        this.notificationService.notifyAdmin({
+          title: 'Invoices generated',
+          message:
+            users.length +
+            ' invoices generated for shipment ' +
+            createInvoiceDto.shipmentId,
+        });
       });
 
       return { invoiceCount: users.length };
@@ -46,18 +63,34 @@ export class InvoiceService {
   }
 
   async findAll() {
-    return await Invoice.findAll({ include: ['items', 'transactions'] });
+    const invoices = await Invoice.findAll({
+      include: ['items', 'transactions'],
+    });
+    return invoices.map((invoice) => {
+      const _invoice = invoice.toJSON();
+      delete _invoice.transactions;
+      return _invoice;
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} invoice`;
+  async findById(id: number) {
+    const invoice = await Invoice.findOne({
+      where: { id },
+    });
+
+    return invoice;
   }
 
-  update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
-    return `This action updates a #${id} invoice`;
+  async findByUser(userId: number) {
+    const invoices = await Invoice.findAll({
+      where: { userId },
+    });
+    return invoices;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} invoice`;
+  async remove(id: number) {
+    return await Invoice.destroy({
+      where: { id },
+    });
   }
 }

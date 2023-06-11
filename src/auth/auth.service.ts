@@ -22,7 +22,7 @@ export class AuthService {
     if (user) {
       if (compareSync(password, user.password)) {
         const payload = { sub: user.id, email: user.email, role: user.role };
-        return { access_token: await this.jwtService.signAsync(payload) };
+        return { access_token: await this.jwtService.signAsync(payload), user };
       }
     } else {
       return null;

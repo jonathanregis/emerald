@@ -26,8 +26,20 @@ export class UsersController {
 
   @Admin()
   @Get('/')
-  getAll() {
-    return this.userRepo.getAll();
+  async getAll(@Req() req: Request, @Res() res: Response) {
+    const users =
+      req.query.role === 'admin'
+        ? await this.userRepo.getAdmins()
+        : await this.userRepo.getAll();
+    res.status(200).json({
+      users,
+    });
+  }
+
+  @Get('me')
+  getCurrent(@Req() req: Request) {
+    const { sub } = req['user'];
+    return this.getById(sub, req);
   }
 
   @Get(':id')

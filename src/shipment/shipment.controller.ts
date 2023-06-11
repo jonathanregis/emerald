@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -48,7 +49,7 @@ export class ShipmentController {
   ) {
     try {
       itemInput.shipmentId = id;
-      const item = this.shipmentService.addItem(itemInput);
+      const item = await this.shipmentService.addItem(itemInput);
       if (item) {
         res.status(201).json({
           item,
@@ -73,6 +74,26 @@ export class ShipmentController {
       res.status(200).json({
         shipments,
       });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Admin()
+  @Delete('/items/:id')
+  async delete(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    try {
+      const deleted = await this.shipmentService.deleteItem(id);
+      if (deleted) {
+        res.status(200).json({
+          message: 'Deleted successfully',
+        });
+      } else {
+        // http spec says to return 200, 204 or 202 even if not found, not 404
+        res.status(200).json({
+          message: 'Resource already deleted or not found',
+        });
+      }
     } catch (e) {
       throw e;
     }

@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { User } from './users.model';
 import { Item } from 'src/shipment/item.model';
 import { Shipment } from 'src/shipment/shipment.model';
+import { Invoice } from 'src/invoice/entities/invoice.model';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +32,12 @@ export class UsersService {
 
   async getById(id: number): Promise<User | undefined> {
     try {
-      const user = await this.usersRepo.findOne({ where: { id } });
+      const user = await this.usersRepo
+        .scope('allRoles')
+        .findOne({
+          where: { id },
+          include: [{ model: Invoice, include: ['transactions'] }],
+        });
       return user;
     } catch (e) {
       throw e;

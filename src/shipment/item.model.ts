@@ -2,6 +2,7 @@ import {
   AllowNull,
   BelongsTo,
   Column,
+  DataType,
   Default,
   ForeignKey,
   Model,
@@ -43,14 +44,14 @@ export class Item extends Model<Item> {
   invoice: Invoice;
 
   @AllowNull
-  @Column
+  @Column(DataType.DECIMAL(6, 1))
   bal: number;
 
   @AllowNull
-  @Column
+  @Column(DataType.DECIMAL(6, 1))
   cbm: number;
 
   @Default(270000)
-  @Column
+  @Column(DataType.DOUBLE)
   unitPrice: number;
 }
