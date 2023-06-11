@@ -12,11 +12,11 @@ export const databaseProviders = [
     useFactory: async () => {
       const sequelize = new Sequelize({
         dialect: 'mysql',
-        host: process.env.DB_HOST,
-        port: parseInt(process.env.DB_PORT),
-        username: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
+        host: process.env.RDS_HOSTNAME || process.env.DB_HOST,
+        port: parseInt(process.env.RDS_PORT || process.env.DB_PORT),
+        username: process.env.RDS_USERNAME || process.env.DB_USER,
+        password: process.env.RDS_PASSWORD || process.env.DB_PASS,
+        database: process.env.RDS_DB_NAME || process.env.DB_NAME,
       });
       sequelize.addModels([
         User,
