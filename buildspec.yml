@@ -5,11 +5,11 @@ phases:
     runtime-versions:
       nodejs: 16
     commands:
-      - echo DB_HOST=${DB_HOST} >> .env
-      - echo DB_PORT=${DB_PORT} >> .env
-      - echo DB_NAME=${DB_NAME} >> .env
-      - echo DB_USER=${DB_USER} >> .env
-      - echo DB_PASS=${DB_PASS} >> .env
+      - echo DB_HOST=${RDS_HOSTNAME} >> .env
+      - echo DB_PORT=${RDS_PORT} >> .env
+      - echo DB_NAME=${RDS_DB_NAME} >> .env
+      - echo DB_USER=${RDS_USERNAME} >> .env
+      - echo DB_PASS=${RDS_PASSWORD} >> .env
       - echo JWT_SECRET=${JWT_SECRET} >> .env
       - echo JWT_EXPIRES=${JWT_EXPIRES} >> .env
       - npm install
