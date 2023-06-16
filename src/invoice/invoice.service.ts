@@ -25,8 +25,8 @@ export class InvoiceService {
         users.map((user) => {
           const userItems = items.filter((x) => x.userId === user.id);
           const amount = userItems.reduce((prev, curr) => {
-            const use = curr.bal ? curr.bal : curr.cbm;
-            return prev + curr.unitPrice * use;
+            const use = curr.cbm ? curr.cbm : curr.bal;
+            return prev + curr.unitPrice * use * curr.quantity;
           }, 0);
 
           Invoice.create({

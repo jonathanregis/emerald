@@ -34,8 +34,9 @@ export class InvoiceController {
   }
 
   @Get()
-  findAll() {
-    return this.invoiceService.findAll();
+  async findAll(@Res() res: Response) {
+    const invoices = await this.invoiceService.findAll();
+    res.status(200).json({ invoices });
   }
 
   @Get(':id')
