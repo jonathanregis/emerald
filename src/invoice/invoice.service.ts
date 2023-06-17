@@ -76,6 +76,7 @@ export class InvoiceService {
   async findById(id: number) {
     const invoice = await Invoice.findOne({
       where: { id },
+      include: ['items', 'transactions'],
     });
 
     return invoice;
