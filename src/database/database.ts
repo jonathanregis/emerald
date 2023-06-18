@@ -1,4 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
+import { Conversation } from 'src/conversation/entities/conversation.model';
+import { Message } from 'src/conversation/entities/message.model';
 import { Invoice } from 'src/invoice/entities/invoice.model';
 import { Notification } from 'src/notification/entities/notification.model';
 import { Item } from 'src/shipment/item.model';
@@ -25,6 +27,8 @@ export const databaseProviders = [
         Invoice,
         Notification,
         Transaction,
+        Conversation,
+        Message,
       ]);
       await sequelize.sync();
       return sequelize;

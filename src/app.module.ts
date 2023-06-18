@@ -9,6 +9,7 @@ import { jwt } from './config';
 import { InvoiceModule } from './invoice/invoice.module';
 import { NotificationModule } from './notification/notification.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TransactionModule } from './transaction/transaction.module';
     InvoiceModule,
     NotificationModule,
     TransactionModule,
+    ConversationModule,
   ],
 })
 export class AppModule {}
