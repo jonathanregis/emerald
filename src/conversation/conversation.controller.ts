@@ -64,4 +64,21 @@ export class ConversationController {
       throw e;
     }
   }
+
+  @Post('read')
+  async markRead(
+    @Body() data: { conversationId: number },
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    try {
+      const modifiedCount = await this.conversationService.readConversation(
+        data.conversationId,
+        req['user'].sub,
+      );
+      res.status(200).json({ modifiedCount });
+    } catch (e) {
+      throw e;
+    }
+  }
 }

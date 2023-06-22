@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Conversation } from './entities/conversation.model';
 import { CreateMessageDto } from './dto/CreateMessageDto';
 import { Message } from './entities/message.model';
-import { DataType } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ConversationService {
@@ -15,12 +15,15 @@ export class ConversationService {
   async getConversation(userId) {
     const conversation = await Conversation.findOrCreate({
       where: { userId },
+      include: ['messages'],
     });
-    return conversation;
+    return conversation[0];
   }
 
   async getAllConversations() {
-    const conversations = await Conversation.findAll({ include: ['messages'] });
+    const conversations = await Conversation.findAll({
+      include: ['messages', 'user'],
+    });
     const json = conversations.map((c) => {
       const n = c.toJSON();
       delete n.messages;
@@ -35,5 +38,13 @@ export class ConversationService {
       content: createMessageDto.content,
       conversationId: createMessageDto.conversationId,
     });
+  }
+
+  async readConversation(id: number, userId: number) {
+    const messagesChanged = await Message.update(
+      { read: 1 },
+      { where: { conversationId: id, read: 0, sender: { [Op.not]: userId } } },
+    );
+    return messagesChanged[0];
   }
 }

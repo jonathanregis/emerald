@@ -52,8 +52,7 @@ export class User extends Model<User> {
   @Column
   phoneNumber: string;
 
-  @Unique
-  @Column
+  @Column({ unique: 'email' })
   email: string;
 
   @Column

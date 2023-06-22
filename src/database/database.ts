@@ -19,6 +19,10 @@ export const databaseProviders = [
         username: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,
+        define: {
+          charset: 'utf8mb4',
+          collate: 'utf8mb4_general_ci',
+        },
       });
       sequelize.addModels([
         User,
@@ -30,7 +34,20 @@ export const databaseProviders = [
         Conversation,
         Message,
       ]);
-      await sequelize.sync();
+      await sequelize.sync({ alter: true }).then((s) => {
+        /* User.findOrCreate({
+          where: { id: 1 },
+          defaults: {
+            email: 'imjonathan.r@gmail.com',
+            password:
+              '$2b$10$JeQ6unn2CGbkdU4OllEaD./0ezxZIp7s1FvWgkaoXGaeKZFNoBo.O',
+            firstName: 'Jonathan',
+            lastName: 'regis',
+            phoneNumber: '+233262071356',
+            role: 'admin',
+          },
+        }); */
+      });
       return sequelize;
     },
   },
