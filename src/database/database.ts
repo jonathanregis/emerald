@@ -35,18 +35,17 @@ export const databaseProviders = [
         Message,
       ]);
       await sequelize.sync({ alter: true }).then((s) => {
-        /* User.findOrCreate({
+        User.findOrCreate({
           where: { id: 1 },
           defaults: {
-            email: 'imjonathan.r@gmail.com',
-            password:
-              '$2b$10$JeQ6unn2CGbkdU4OllEaD./0ezxZIp7s1FvWgkaoXGaeKZFNoBo.O',
+            email: process.env.INITIAL_ADMIN_USER,
+            password: process.env.INITIAL_ADMIN_PASSWORD,
             firstName: 'Jonathan',
-            lastName: 'regis',
+            lastName: 'Regis',
             phoneNumber: '+233262071356',
             role: 'admin',
           },
-        }); */
+        });
       });
       return sequelize;
     },
