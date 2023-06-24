@@ -35,7 +35,7 @@ export const databaseProviders = [
         Message,
       ]);
       await sequelize.sync({ alter: true }).then((s) => {
-        User.findOrCreate({
+        User.scope('admin').findOrCreate({
           where: { id: 1 },
           defaults: {
             email: process.env.INITIAL_ADMIN_USER,

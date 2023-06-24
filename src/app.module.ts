@@ -10,6 +10,8 @@ import { InvoiceModule } from './invoice/invoice.module';
 import { NotificationModule } from './notification/notification.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { EventsModule } from './events/events.module';
+import { EventsGateway } from './events/events.gateway';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { ConversationModule } from './conversation/conversation.module';
     NotificationModule,
     TransactionModule,
     ConversationModule,
+    EventsModule,
   ],
 })
 export class AppModule {}

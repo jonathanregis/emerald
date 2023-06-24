@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Conversation } from './entities/conversation.model';
 import { CreateMessageDto } from './dto/CreateMessageDto';
 import { Message } from './entities/message.model';
 import { Op } from 'sequelize';
+import { EventsGateway } from 'src/events/events.gateway';
+import { WebSocketServer } from '@nestjs/websockets';
 
 @Injectable()
 export class ConversationService {
+  constructor() {}
   async createConversation(userId: number) {
     return await Conversation.create({
       userId,
@@ -15,7 +18,14 @@ export class ConversationService {
   async getConversation(userId) {
     const conversation = await Conversation.findOrCreate({
       where: { userId },
-      include: ['messages'],
+      include: [
+        {
+          model: Message,
+          limit: 25,
+          separate: true,
+          order: [['createdAt', 'DESC']],
+        },
+      ],
     });
     return conversation[0];
   }
@@ -37,6 +47,8 @@ export class ConversationService {
       sender: createMessageDto.sender,
       content: createMessageDto.content,
       conversationId: createMessageDto.conversationId,
+    }).then((message: Message) => {
+      return message;
     });
   }
 

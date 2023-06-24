@@ -7,12 +7,16 @@ import {
   Post,
   Req,
   Res,
+  Sse,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { Admin } from 'src/common/decorators/Admin';
 import { Response, Request } from 'express';
 import { CreateMessageDto } from './dto/CreateMessageDto';
+import { Observable, interval, map } from 'rxjs';
+import internal from 'stream';
+import { Public } from 'src/common/decorators/Public';
 
 @Controller('conversation')
 export class ConversationController {
@@ -42,6 +46,10 @@ export class ConversationController {
       throw UnauthorizedException;
     }
     const conversation = await this.conversationService.getConversation(userId);
+    conversation.messages = conversation.messages.sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
     res.status(200).json(conversation);
   }
 
