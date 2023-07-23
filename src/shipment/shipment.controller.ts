@@ -99,7 +99,6 @@ export class ShipmentController {
     }
   }
 
-  @Admin()
   @Get(':id')
   async get(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     try {

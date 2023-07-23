@@ -73,10 +73,15 @@ export class UsersController {
   }
 
   @Get(':id/stats')
-  getStats(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+  async getStats(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const requestUser = req['user'];
     if (requestUser?.sub === id || requestUser.role === 'admin') {
-      return this.userRepo.getUserStats(id);
+      const stats = await this.userRepo.getUserStats(id);
+      res.status(200).json({ stats });
     } else {
       throw new UnauthorizedException();
     }
