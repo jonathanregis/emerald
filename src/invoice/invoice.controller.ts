@@ -8,11 +8,14 @@ import {
   Delete,
   Res,
   ParseIntPipe,
+  Req,
+  HttpException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('invoice')
 export class InvoiceController {
@@ -34,9 +37,19 @@ export class InvoiceController {
   }
 
   @Get()
-  async findAll(@Res() res: Response) {
-    const invoices = await this.invoiceService.findAll();
-    res.status(200).json({ invoices });
+  async findAll(@Res() res: Response, @Req() req: Request) {
+    const user = req['user'];
+    if (user) {
+      if (user.role === 'admin') {
+        const invoices = await this.invoiceService.findAll();
+        res.status(200).json({ invoices });
+      } else {
+        const invoices = await this.invoiceService.findByUser(user.sub);
+        res.status(200).json({ invoices });
+      }
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 
   @Get(':id')

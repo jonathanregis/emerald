@@ -72,6 +72,26 @@ export class UsersController {
     }
   }
 
+  @Get(':id/stats')
+  getStats(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const requestUser = req['user'];
+    if (requestUser?.sub === id || requestUser.role === 'admin') {
+      return this.userRepo.getUserStats(id);
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
+
+  @Get(':id/transactions')
+  getTransactions(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const requestUser = req['user'];
+    if (requestUser?.sub === id || requestUser.role === 'admin') {
+      return this.userRepo.getTransactions(id);
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
+
   @Public()
   @Post('/create')
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {

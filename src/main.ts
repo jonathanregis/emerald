@@ -23,6 +23,6 @@ async function bootstrap() {
   app.useWebSocketAdapter(new WsAdapter(app));
   app.useStaticAssets(path.join(__dirname, '..', 'public'));
   // await app.listen(process.env.APP_PORT || 3001);
-  await app.listen(process.env.PORT);
+  await app.listen(process.env.PORT || process.env.APP_PORT || 3001);
 }
 bootstrap();

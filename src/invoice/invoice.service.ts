@@ -85,6 +85,7 @@ export class InvoiceService {
   async findByUser(userId: number) {
     const invoices = await Invoice.findAll({
       where: { userId },
+      include: ['items'],
     });
     return invoices;
   }

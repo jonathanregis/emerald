@@ -23,6 +23,7 @@ export class TransactionService {
     try {
       return Transaction.findAll({
         include: ['user'],
+        where: filters,
       });
     } catch (e) {
       throw e;
