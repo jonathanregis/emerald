@@ -30,6 +30,10 @@ export class ConversationService {
     return conversation[0];
   }
 
+  async deleteConversation(conversationId) {
+    Conversation.destroy({ where: { id: conversationId } });
+  }
+
   async getAllConversations() {
     const conversations = await Conversation.findAll({
       include: ['messages', 'user'],

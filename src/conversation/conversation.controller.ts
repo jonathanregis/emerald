@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -85,6 +86,21 @@ export class ConversationController {
         req['user'].sub,
       );
       res.status(200).json({ modifiedCount });
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Admin()
+  @Delete(':conversationId')
+  async deleteConversation(
+    @Param('conversationId', ParseIntPipe) conversationId: number,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    try {
+      await this.conversationService.deleteConversation(conversationId);
+      res.status(200).json({ message: 'conversation deleted' });
     } catch (e) {
       throw e;
     }
