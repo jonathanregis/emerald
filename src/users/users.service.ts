@@ -114,7 +114,7 @@ export class UsersService {
         totalAmount: data[0].reduce((prev, curr) => prev + curr.amount, 0),
         outstandingAmount: invoices
           .filter((invoice) => invoice.balance > 0)
-          .reduce((prev, curr) => prev + curr.total, 0),
+          .reduce((prev, curr) => prev + curr.balance, 0),
       },
       invoices: {
         total: invoices.length,
