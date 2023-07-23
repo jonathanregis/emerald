@@ -85,9 +85,13 @@ export class InvoiceService {
   async findByUser(userId: number) {
     const invoices = await Invoice.findAll({
       where: { userId },
-      include: ['items'],
+      include: ['items', 'transactions'],
     });
-    return invoices;
+    return invoices.map((invoice) => {
+      const _invoice = invoice.toJSON();
+      delete _invoice.transactions;
+      return _invoice;
+    });
   }
 
   async remove(id: number) {
