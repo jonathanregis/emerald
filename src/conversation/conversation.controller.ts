@@ -47,10 +47,11 @@ export class ConversationController {
       throw UnauthorizedException;
     }
     const conversation = await this.conversationService.getConversation(userId);
-    conversation.messages = conversation.messages.sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    );
+    conversation.messages =
+      conversation.messages?.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      ) || [];
     res.status(200).json(conversation);
   }
 
