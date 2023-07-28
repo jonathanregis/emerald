@@ -1,10 +1,13 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Req,
   Res,
   UnauthorizedException,
@@ -16,6 +19,7 @@ import { UsersService } from './users.service';
 import { Admin } from 'src/common/decorators/Admin';
 import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/common/decorators/Public';
+import { UpdateUserDto } from './update-user-dto';
 
 @Controller('users')
 export class UsersController {
@@ -117,6 +121,37 @@ export class UsersController {
           user,
         });
       }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Put(':id')
+  async updateUser(
+    @Param('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const existingUser = await User.findByPk(userId);
+
+      if (!existingUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Update the user with the new data
+      existingUser.firstName =
+        updateUserDto.firstName || existingUser.firstName;
+      existingUser.lastName = updateUserDto.lastName || existingUser.lastName;
+      existingUser.phoneNumber =
+        updateUserDto.phoneNumber || existingUser.phoneNumber;
+
+      const updatedUser = await existingUser.save();
+
+      res.status(200).json({
+        message: 'User updated successfully',
+        user: updatedUser,
+      });
     } catch (e) {
       throw e;
     }
