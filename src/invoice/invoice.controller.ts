@@ -3,13 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
   ParseIntPipe,
   Req,
-  HttpException,
   UnauthorizedException,
   NotFoundException,
   Query,
@@ -17,15 +15,15 @@ import {
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
-import * as pdf from 'dynamic-html-pdf';
 import { Public } from 'src/common/decorators/Public';
 import * as path from 'path';
 import { Item } from 'src/shipment/item.model';
 import { Admin } from 'src/common/decorators/Admin';
 import { compareSync } from 'bcrypt';
+import puppeteer from 'puppeteer';
+import Handlebars from 'handlebars';
 
 @Controller('invoice')
 export class InvoiceController {
@@ -95,28 +93,7 @@ export class InvoiceController {
       'utf8',
     );
 
-    var document = {
-      type: 'buffer',
-      template: html,
-      context: {
-        items: invoice.items.map((item) => item.toJSON()),
-        shipment: invoice.shipment,
-        container: invoice.shipment.container,
-        destination: `${invoice.shipment.arrivalCity}, ${invoice.shipment.arrivalCountry}`,
-        departureDate: `${invoice.shipment.departureDate.toLocaleDateString(
-          'en-GB',
-          { month: 'long', day: '2-digit', year: 'numeric' },
-        )}`,
-        arrivalDate: `${invoice.shipment.arrivalDate.toLocaleDateString(
-          'en-GB',
-          { month: 'long', day: '2-digit', year: 'numeric' },
-        )}`,
-        seal: `${invoice.shipment.seal}`,
-        total: invoice.total.toLocaleString(),
-      },
-    };
-
-    pdf.registerHelper('multiply', function (val1, val2) {
+    Handlebars.registerHelper('multiply', function (val1, val2) {
       const a = parseFloat(val1);
       const b = parseFloat(val2);
       if (!isNaN(a) && !isNaN(b)) {
@@ -125,7 +102,7 @@ export class InvoiceController {
       return 0;
     });
 
-    pdf.registerHelper('each', function (context, options) {
+    Handlebars.registerHelper('each', function (context, options) {
       var ret = '';
 
       for (var i = 0, j = context.length; i < j; i++) {
@@ -135,14 +112,50 @@ export class InvoiceController {
       return ret;
     });
 
-    const file = await pdf
-      .create(document, options)
-      .then((res) => {
-        return res;
-      })
-      .catch((error) => {
-        throw error;
-      });
+    const template = Handlebars.compile(html);
+    const content = template({
+      items: invoice.items.map((item) => item.toJSON()),
+      shipment: invoice.shipment,
+      container: invoice.shipment.container,
+      destination: `${invoice.shipment.arrivalCity}, ${invoice.shipment.arrivalCountry}`,
+      departureDate: `${invoice.shipment.departureDate.toLocaleDateString(
+        'en-GB',
+        { month: 'long', day: '2-digit', year: 'numeric' },
+      )}`,
+      arrivalDate: `${invoice.shipment.arrivalDate.toLocaleDateString('en-GB', {
+        month: 'long',
+        day: '2-digit',
+        year: 'numeric',
+      })}`,
+      seal: `${invoice.shipment.seal}`,
+      total: invoice.total.toLocaleString(),
+    });
+
+    // Create a browser instance
+    const browser = await puppeteer.launch();
+
+    // Create a new page
+    const page = await browser.newPage();
+
+    await page.setContent(content, { waitUntil: 'domcontentloaded' });
+
+    // To reflect CSS used for screens instead of print
+    await page.emulateMediaType('screen');
+
+    // Downlaod the PDF
+    const file = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '6mm',
+        bottom: '6mm',
+        left: '6mm',
+        right: '6mm',
+      },
+    });
+
+    // Close the browser instance
+    await browser.close();
 
     res.setHeader(
       'Content-Disposition',
