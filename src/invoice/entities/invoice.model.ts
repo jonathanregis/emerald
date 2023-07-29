@@ -30,12 +30,13 @@ export class Invoice extends Model<Invoice> {
 
   @Column(DataType.VIRTUAL)
   get downloadUrl() {
-    const address = server.address();
-    const host = address.address === '::' ? 'localhost' : address.address;
-    const port = address.port;
-    const isHttps = server.secure;
+    const host = process.env.HOST || 'localhost';
+    const port = String(process.env.PORT || process.env.APP_PORT);
+    const isHttps = process.env.NODE_ENV === 'production' || server.secure;
     const protocol = isHttps ? 'https' : 'http';
-    const appUrl = `${protocol}://${host}:${port}`;
+    const appUrl = `${protocol}://${host}${
+      port === '8080' || port === '80' ? '' : ':'
+    }${port}`;
     const key = hashSync(this.number, 10);
     const url =
       appUrl + '/invoice/download/' + this.getDataValue('id') + '?key=' + key;
