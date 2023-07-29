@@ -30,13 +30,11 @@ export class Invoice extends Model<Invoice> {
 
   @Column(DataType.VIRTUAL)
   get downloadUrl() {
-    const host = process.env.HOST || 'localhost';
     const port = String(process.env.PORT || process.env.APP_PORT);
-    const isHttps = process.env.NODE_ENV === 'production' || server.secure;
-    const protocol = isHttps ? 'https' : 'http';
-    const appUrl = `${protocol}://${host}${
-      port === '8080' || port === '80' ? '' : ':'
-    }${port}`;
+    const appUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://prod.eba-uuimfeiu.us-east-1.elasticbeanstalk.com'
+        : 'http://localhost:' + port;
     const key = hashSync(this.number, 10);
     const url =
       appUrl + '/invoice/download/' + this.getDataValue('id') + '?key=' + key;
