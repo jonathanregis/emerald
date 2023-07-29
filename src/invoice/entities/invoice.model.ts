@@ -32,7 +32,7 @@ export class Invoice extends Model<Invoice> {
   get downloadUrl() {
     const port = String(process.env.PORT || process.env.APP_PORT);
     const appUrl =
-      process.env.NODE_ENV === 'production'
+      port === '8080' || port === '80'
         ? 'https://prod.eba-uuimfeiu.us-east-1.elasticbeanstalk.com'
         : 'http://localhost:' + port;
     const key = hashSync(this.number, 10);
