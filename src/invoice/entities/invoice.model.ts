@@ -1,3 +1,4 @@
+import { ApplicationConfig } from '@nestjs/core';
 import { VIRTUAL } from 'sequelize';
 import {
   BelongsTo,
@@ -9,6 +10,7 @@ import {
   Model,
   HasMany,
 } from 'sequelize-typescript';
+import { server } from 'src/main';
 import { Item } from 'src/shipment/item.model';
 import { Shipment } from 'src/shipment/shipment.model';
 import { Transaction } from 'src/transaction/entities/transaction.entity';
@@ -24,6 +26,19 @@ export class Invoice extends Model<Invoice> {
   @ForeignKey(() => User)
   @Column
   userId: number;
+
+  @Column(DataType.VIRTUAL)
+  get downloadUrl() {
+    const address = server.address();
+    const host = address.address === '::' ? 'localhost' : address.address;
+    const port = address.port;
+    const isHttps = server.secure;
+
+    const protocol = isHttps ? 'https' : 'http';
+    const appUrl = `${protocol}://${host}:${port}`;
+    const url = appUrl + '/invoice/download/' + this.getDataValue('id');
+    return url;
+  }
 
   @ForeignKey(() => Shipment)
   @Column

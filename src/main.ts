@@ -6,6 +6,8 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import * as path from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+export let server;
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
@@ -23,6 +25,6 @@ async function bootstrap() {
   app.useWebSocketAdapter(new WsAdapter(app));
   app.useStaticAssets(path.join(__dirname, '..', 'public'));
   // await app.listen(process.env.APP_PORT || 3001);
-  await app.listen(process.env.PORT || process.env.APP_PORT || 3001);
+  server = await app.listen(process.env.PORT || process.env.APP_PORT || 3001);
 }
 bootstrap();
