@@ -11,11 +11,18 @@ import {
   Req,
   HttpException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Request, Response } from 'express';
+import * as fs from 'fs';
+import * as pdf from 'dynamic-html-pdf';
+import { Public } from 'src/common/decorators/Public';
+import * as path from 'path';
+import { Item } from 'src/shipment/item.model';
+import { Admin } from 'src/common/decorators/Admin';
 
 @Controller('invoice')
 export class InvoiceController {
@@ -50,6 +57,101 @@ export class InvoiceController {
     } else {
       throw new UnauthorizedException();
     }
+  }
+
+  @Get('download/:id')
+  async downloadPDF(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response,
+  ) {
+    const invoice = await this.invoiceService.findById(id, [
+      { model: Item, include: ['user'] },
+      'transactions',
+      'shipment',
+    ]);
+
+    if (!invoice) {
+      throw new NotFoundException('No Invoice found with the specified id');
+    }
+
+    const options = {
+      format: 'A4',
+      orientation: 'portrait',
+      border: '6mm',
+    };
+
+    const invoiceDirectory = path.resolve(process.cwd(), 'src/invoice');
+    const html = fs.readFileSync(
+      path.join(invoiceDirectory, 'invoice.html'),
+      'utf8',
+    );
+
+    var document = {
+      type: 'buffer',
+      template: html,
+      context: {
+        items: invoice.items.map((item) => item.toJSON()),
+        shipment: invoice.shipment,
+        container: invoice.shipment.container,
+        destination: `${invoice.shipment.arrivalCity}, ${invoice.shipment.arrivalCountry}`,
+        departureDate: `${invoice.shipment.departureDate.toLocaleDateString(
+          'en-GB',
+          { month: 'long', day: '2-digit', year: 'numeric' },
+        )}`,
+        arrivalDate: `${invoice.shipment.arrivalDate.toLocaleDateString(
+          'en-GB',
+          { month: 'long', day: '2-digit', year: 'numeric' },
+        )}`,
+        seal: `${invoice.shipment.seal}`,
+        total: invoice.total,
+      },
+    };
+
+    pdf.registerHelper('multiply', function (val1, val2) {
+      const a = parseFloat(val1);
+      const b = parseFloat(val2);
+      if (!isNaN(a) && !isNaN(b)) {
+        return a * b;
+      }
+      return 0;
+    });
+
+    pdf.registerHelper('each', function (context, options) {
+      var ret = '';
+
+      for (var i = 0, j = context.length; i < j; i++) {
+        ret = ret + options.fn(context[i]);
+      }
+
+      return ret;
+    });
+
+    const file = await pdf
+      .create(document, options)
+      .then((res) => {
+        return res;
+      })
+      .catch((error) => {
+        throw error;
+      });
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="vipcargo_invoice_${invoice.number}.pdf"`,
+    );
+    res.setHeader('Content-Type', 'application/pdf');
+    return res.send(file);
+  }
+
+  @Admin()
+  @Get('preview')
+  previewInvoice(@Res() res: Response) {
+    const invoiceDirectory = path.resolve(process.cwd(), 'src/invoice');
+    const html = fs.readFileSync(
+      path.join(invoiceDirectory, 'invoice.html'),
+      'utf8',
+    );
+    return res.send(html);
   }
 
   @Get(':id')

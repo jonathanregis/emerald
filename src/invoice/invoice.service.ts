@@ -5,6 +5,7 @@ import { ShipmentService } from 'src/shipment/shipment.service';
 import { User } from 'src/users/users.model';
 import { Item } from 'src/shipment/item.model';
 import { NotificationService } from 'src/notification/notification.service';
+import { IncludeOptions, Sequelize } from 'sequelize';
 
 @Injectable()
 export class InvoiceService {
@@ -73,10 +74,10 @@ export class InvoiceService {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: number, include: any = ['items', 'transactions']) {
     const invoice = await Invoice.findOne({
       where: { id },
-      include: ['items', 'transactions'],
+      include,
     });
 
     return invoice;
