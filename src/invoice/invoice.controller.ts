@@ -103,7 +103,7 @@ export class InvoiceController {
           { month: 'long', day: '2-digit', year: 'numeric' },
         )}`,
         seal: `${invoice.shipment.seal}`,
-        total: invoice.total,
+        total: invoice.total.toLocaleString(),
       },
     };
 
@@ -111,7 +111,7 @@ export class InvoiceController {
       const a = parseFloat(val1);
       const b = parseFloat(val2);
       if (!isNaN(a) && !isNaN(b)) {
-        return a * b;
+        return (a * b).toLocaleString();
       }
       return 0;
     });
