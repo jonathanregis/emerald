@@ -12,6 +12,8 @@ import {
   HttpException,
   UnauthorizedException,
   NotFoundException,
+  Query,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
@@ -23,6 +25,7 @@ import { Public } from 'src/common/decorators/Public';
 import * as path from 'path';
 import { Item } from 'src/shipment/item.model';
 import { Admin } from 'src/common/decorators/Admin';
+import { compareSync } from 'bcrypt';
 
 @Controller('invoice')
 export class InvoiceController {
@@ -59,16 +62,22 @@ export class InvoiceController {
     }
   }
 
+  @Public()
   @Get('download/:id')
   async downloadPDF(
     @Param('id', ParseIntPipe) id: number,
     @Res() res: Response,
+    @Query('key') key: string,
   ) {
     const invoice = await this.invoiceService.findById(id, [
       { model: Item, include: ['user'] },
       'transactions',
       'shipment',
     ]);
+
+    if (!compareSync(invoice.number, key)) {
+      throw new ForbiddenException();
+    }
 
     if (!invoice) {
       throw new NotFoundException('No Invoice found with the specified id');

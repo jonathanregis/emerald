@@ -1,4 +1,5 @@
 import { ApplicationConfig } from '@nestjs/core';
+import { hashSync } from 'bcrypt';
 import { VIRTUAL } from 'sequelize';
 import {
   BelongsTo,
@@ -33,10 +34,11 @@ export class Invoice extends Model<Invoice> {
     const host = address.address === '::' ? 'localhost' : address.address;
     const port = address.port;
     const isHttps = server.secure;
-
     const protocol = isHttps ? 'https' : 'http';
     const appUrl = `${protocol}://${host}:${port}`;
-    const url = appUrl + '/invoice/download/' + this.getDataValue('id');
+    const key = hashSync(this.number, 10);
+    const url =
+      appUrl + '/invoice/download/' + this.getDataValue('id') + '?key=' + key;
     return url;
   }
 
