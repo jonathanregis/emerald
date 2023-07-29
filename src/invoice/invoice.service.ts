@@ -27,7 +27,7 @@ export class InvoiceService {
           const userItems = items.filter((x) => x.userId === user.id);
           const amount = userItems.reduce((prev, curr) => {
             const use = curr.cbm ? curr.cbm : curr.bal;
-            return prev + curr.unitPrice * use * curr.quantity;
+            return prev + curr.unitPrice * use;
           }, 0);
 
           Invoice.create({
