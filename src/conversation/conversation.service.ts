@@ -42,7 +42,7 @@ export class ConversationService {
         },
       ],
     });
-    return conversation[0];
+    return conversation;
   }
 
   async deleteConversation(conversationId) {

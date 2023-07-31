@@ -71,6 +71,7 @@ export class EventsGateway
     const convo = await this.conversationService.getConversationById(
       data.conversationId,
     );
+
     if (message) {
       const room = this.createOrGetRoom(data.conversationId.toString());
       if (
