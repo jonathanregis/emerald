@@ -22,7 +22,7 @@ export class NotificationService {
   ) {
     if (push) {
       this.onesignalService.createNotification({
-        include_external_user_ids: ['2'], // notification.to?.map((id) => id?.toString()),
+        include_external_user_ids: notification.to?.map((id) => id?.toString()),
         template_id: templates[notification.template],
         contents: {
           en: notification.message,
