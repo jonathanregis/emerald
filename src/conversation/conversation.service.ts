@@ -30,6 +30,21 @@ export class ConversationService {
     return conversation[0];
   }
 
+  async getConversationById(id) {
+    const conversation = await Conversation.findOne({
+      where: { id },
+      include: [
+        {
+          model: Message,
+          limit: 25,
+          separate: true,
+          order: [['createdAt', 'DESC']],
+        },
+      ],
+    });
+    return conversation[0];
+  }
+
   async deleteConversation(conversationId) {
     Conversation.destroy({ where: { id: conversationId } });
   }

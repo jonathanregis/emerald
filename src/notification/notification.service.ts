@@ -43,11 +43,14 @@ export class NotificationService {
     try {
       const users = await this.userService.getAdmins();
       const ids = users.map((user) => user.id);
-      return this.create({
-        to: ids,
-        title,
-        message,
-      });
+      return this.create(
+        {
+          to: ids,
+          title,
+          message,
+        },
+        false,
+      );
     } catch (e) {
       throw e;
     }

@@ -68,7 +68,7 @@ export class EventsGateway
     @ConnectedSocket() client: Socket,
   ): Promise<Message> {
     const message = await this.conversationService.createMessage(data);
-    const convo = await this.conversationService.getConversation(
+    const convo = await this.conversationService.getConversationById(
       data.conversationId,
     );
     if (message) {
