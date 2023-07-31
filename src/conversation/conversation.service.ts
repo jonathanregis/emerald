@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Conversation } from './entities/conversation.model';
 import { CreateMessageDto } from './dto/CreateMessageDto';
 import { Message } from './entities/message.model';
-import { Op } from 'sequelize';
+import { Includeable, Op } from 'sequelize';
 import { EventsGateway } from 'src/events/events.gateway';
 import { WebSocketServer } from '@nestjs/websockets';
 
@@ -47,11 +47,23 @@ export class ConversationService {
   }
 
   async createMessage(createMessageDto: CreateMessageDto) {
-    return await Message.create({
-      sender: createMessageDto.sender,
-      content: createMessageDto.content,
-      conversationId: createMessageDto.conversationId,
-    }).then((message: Message) => {
+    const include: Includeable[] = [
+      {
+        model: Conversation,
+        where: {
+          id: createMessageDto.conversationId,
+        },
+      },
+    ];
+
+    return await Message.create(
+      {
+        sender: createMessageDto.sender,
+        content: createMessageDto.content,
+        conversationId: createMessageDto.conversationId,
+      },
+      { include },
+    ).then((message: Message) => {
       return message;
     });
   }

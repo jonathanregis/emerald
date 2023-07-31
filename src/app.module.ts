@@ -12,6 +12,7 @@ import { TransactionModule } from './transaction/transaction.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { EventsModule } from './events/events.module';
 import { EventsGateway } from './events/events.gateway';
+import { OneSignalModule } from 'onesignal-api-client-nest';
 
 @Module({
   imports: [

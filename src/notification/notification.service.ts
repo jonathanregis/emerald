@@ -1,12 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { Notification, NotificationType } from './entities/notification.model';
+import { OneSignalService } from 'onesignal-api-client-nest';
+
+const templates = { newInvoice: '6adaa5dd-a999-490e-a6a6-0a82b7af9fdb' };
 
 @Injectable()
 export class NotificationService {
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService,
+    private readonly onesignalService: OneSignalService,
+  ) {}
+  private async create(
+    notification: NotificationType & {
+      messageFR?: string;
+      titleFR?: string;
+      template?: keyof typeof templates;
+      templateData?: any;
+    },
+    push = true,
+  ) {
+    if (push) {
+      this.onesignalService.createNotification({
+        include_external_user_ids: ['2'], // notification.to?.map((id) => id?.toString()),
+        template_id: templates[notification.template],
+        contents: {
+          en: notification.message,
+          fr: notification.messageFR,
+        },
+        headings: {
+          en: notification.title,
+          fr: notification.titleFR,
+        },
+        data: notification.templateData,
+      });
+    }
 
-  private async create(notification: NotificationType) {
     return Notification.create(notification);
   }
 
@@ -24,10 +53,19 @@ export class NotificationService {
     }
   }
 
-  async notify({ message, title, to }): Promise<Notification> {
+  async notify({
+    message,
+    title,
+    to,
+  }: NotificationType & {
+    messageFR?: string;
+    titleFR?: string;
+    template?: keyof typeof templates;
+    templateData?: any;
+  }): Promise<Notification> {
     try {
       return this.create({
-        to: [to],
+        to: [to].flat(),
         title,
         message,
       });

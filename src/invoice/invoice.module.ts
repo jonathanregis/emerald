@@ -8,17 +8,20 @@ import { usersProviders } from 'src/users/users';
 import { TransactionModule } from 'src/transaction/transaction.module';
 import { UsersModule } from 'src/users/users.module';
 import { TransactionService } from 'src/transaction/transaction.service';
+import { NotificationModule } from 'src/notification/notification.module';
+import { ShipmentModule } from 'src/shipment/shipment.module';
 
 @Module({
   controllers: [InvoiceController],
-  providers: [
-    InvoiceService,
-    ShipmentService,
-    NotificationService,
-    UsersService,
-    ...usersProviders,
-    TransactionService,
+  providers: [InvoiceService],
+  imports: [
+    UsersModule,
+    ShipmentModule,
+    NotificationModule,
+    UsersModule,
+    InvoiceModule,
+    TransactionModule,
   ],
-  imports: [UsersModule],
+  exports: [InvoiceService],
 })
 export class InvoiceModule {}

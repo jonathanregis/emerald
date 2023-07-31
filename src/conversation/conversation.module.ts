@@ -8,5 +8,6 @@ import { Events } from 'src/events/events';
 @Module({
   providers: [ConversationService],
   controllers: [ConversationController],
+  exports: [ConversationService],
 })
 export class ConversationModule {}

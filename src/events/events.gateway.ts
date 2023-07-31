@@ -13,13 +13,17 @@ import { Server, Socket } from 'socket.io';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { CreateMessageDto } from 'src/conversation/dto/CreateMessageDto';
 import { Message } from 'src/conversation/entities/message.model';
+import { NotificationService } from 'src/notification/notification.service';
 
 @WebSocketGateway()
 @Injectable()
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private conversationService: ConversationService) {
+  constructor(
+    private conversationService: ConversationService,
+    private notificationService: NotificationService,
+  ) {
     this.rooms = [];
   }
   @WebSocketServer()
@@ -65,12 +69,22 @@ export class EventsGateway
   ): Promise<Message> {
     const message = await this.conversationService.createMessage(data);
     if (message) {
-      this.createOrGetRoom(data.conversationId.toString()).join(client).emit({
+      const room = this.createOrGetRoom(data.conversationId.toString());
+      if (
+        room.clients.size <= 0 ||
+        (room.hasClient(client) && room.clients.size === 1)
+      ) {
+        this.notificationService.notify({
+          title: 'Support team',
+          message: message.content,
+          to: [message.conversation?.userId],
+        });
+      }
+      room.join(client).emit({
         eventData: message,
         type: 'new_message',
       });
     }
-
     return null;
   }
 

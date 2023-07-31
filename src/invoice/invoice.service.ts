@@ -44,6 +44,11 @@ export class InvoiceService {
                 createInvoiceDto.shipmentId,
               title: 'New invoice',
               to: [invoice.userId],
+              template: 'newInvoice',
+              templateData: {
+                invoiceNumber: invoice.number,
+                shipmentID: createInvoiceDto.shipmentId,
+              },
             });
           });
         }),
