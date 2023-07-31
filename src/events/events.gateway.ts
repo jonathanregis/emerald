@@ -68,6 +68,9 @@ export class EventsGateway
     @ConnectedSocket() client: Socket,
   ): Promise<Message> {
     const message = await this.conversationService.createMessage(data);
+    const convo = await this.conversationService.getConversation(
+      data.conversationId,
+    );
     if (message) {
       const room = this.createOrGetRoom(data.conversationId.toString());
       if (
@@ -77,7 +80,7 @@ export class EventsGateway
         this.notificationService.notify({
           title: 'Support team',
           message: message.content,
-          to: [message.conversation?.userId],
+          to: [convo?.userId],
         });
       }
       room.join(client).emit({

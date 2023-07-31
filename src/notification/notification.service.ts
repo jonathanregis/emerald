@@ -57,6 +57,10 @@ export class NotificationService {
     message,
     title,
     to,
+    messageFR,
+    titleFR,
+    template,
+    templateData,
   }: NotificationType & {
     messageFR?: string;
     titleFR?: string;
@@ -68,6 +72,10 @@ export class NotificationService {
         to: [to].flat(),
         title,
         message,
+        messageFR,
+        titleFR,
+        template,
+        templateData,
       });
     } catch (e) {
       throw e;
