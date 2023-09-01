@@ -141,10 +141,11 @@ export class UsersController {
 
       // Update the user with the new data
       existingUser.firstName =
-        updateUserDto.firstName || existingUser.firstName;
-      existingUser.lastName = updateUserDto.lastName || existingUser.lastName;
+        updateUserDto?.firstName || existingUser.firstName;
+      existingUser.lastName = updateUserDto?.lastName || existingUser.lastName;
       existingUser.phoneNumber =
-        updateUserDto.phoneNumber || existingUser.phoneNumber;
+        updateUserDto?.phoneNumber || existingUser.phoneNumber;
+      existingUser.role = updateUserDto?.role || existingUser.role;
 
       const updatedUser = await existingUser.save();
 
