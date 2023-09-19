@@ -133,7 +133,7 @@ export class UsersController {
     @Res() res: Response,
   ) {
     try {
-      const existingUser = await User.findByPk(userId);
+      const existingUser = await User.findOne({ where: { id: userId } });
 
       if (!existingUser) {
         throw new NotFoundException(`User ${userId} not found`);
