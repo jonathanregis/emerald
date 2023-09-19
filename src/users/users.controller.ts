@@ -136,7 +136,7 @@ export class UsersController {
       const existingUser = await User.findByPk(userId);
 
       if (!existingUser) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException(`User ${userId} not found`);
       }
 
       // Update the user with the new data
