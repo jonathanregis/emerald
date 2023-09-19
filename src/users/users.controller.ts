@@ -128,7 +128,7 @@ export class UsersController {
 
   @Put(':id')
   async updateUser(
-    @Param('id') userId: string,
+    @Param('id', ParseIntPipe) userId: number,
     @Body() updateUserDto: UpdateUserDto,
     @Res() res: Response,
   ) {
