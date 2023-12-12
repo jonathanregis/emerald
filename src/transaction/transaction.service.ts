@@ -29,4 +29,12 @@ export class TransactionService {
       throw e;
     }
   }
+
+  async deleteTransaction(id): Promise<number> {
+    try {
+      return Transaction.destroy({ where: { id } });
+    } catch (e) {
+      throw e;
+    }
+  }
 }

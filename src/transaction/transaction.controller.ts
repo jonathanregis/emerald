@@ -1,4 +1,14 @@
-import { Controller, Post, Req, Res, Body, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Req,
+  Res,
+  Body,
+  Get,
+  Delete,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import CreateTransactionDto from './dto/create-transaction.dto';
 import { Admin } from 'src/common/decorators/Admin';
@@ -46,6 +56,22 @@ export class TransactionController {
       const transactions = await this.transactionService.getAll(req.query);
       res.status(200).json({
         transactions,
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
+  @Admin()
+  @Delete(':id')
+  async deleteTransaction(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    try {
+      await this.transactionService.deleteTransaction(id);
+      res.status(200).json({
+        message: 'transaction deleted',
       });
     } catch (e) {
       throw e;
