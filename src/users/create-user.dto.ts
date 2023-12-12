@@ -2,10 +2,11 @@ import {
   IsEmail,
   IsNumberString,
   IsAlpha,
-  IsStrongPassword,
   IsNotEmpty,
   IsEnum,
   IsOptional,
+  IsString,
+  MinLength,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -22,8 +23,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @IsStrongPassword()
-  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
   password: string;
 
   @IsEnum({ admin: 'admin', customer: 'customer' })
