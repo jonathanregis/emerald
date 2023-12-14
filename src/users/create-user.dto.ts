@@ -10,10 +10,10 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsAlpha()
+  @IsString()
   firstName: string;
 
-  @IsAlpha()
+  @IsString()
   lastName: string;
 
   @IsNumberString()
