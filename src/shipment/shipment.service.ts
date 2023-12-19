@@ -17,6 +17,20 @@ export class ShipmentService {
     }
   }
 
+  async update(
+    createShipmentDto: CreateShipmentDto,
+    id: number,
+  ): Promise<number[]> {
+    try {
+      const shipment = await Shipment.update(createShipmentDto, {
+        where: { id },
+      });
+      return shipment;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async getAll(): Promise<Shipment[]> {
     try {
       return await Shipment.findAll({ include: ['items'] });

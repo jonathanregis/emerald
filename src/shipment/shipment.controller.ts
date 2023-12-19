@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Res,
 } from '@nestjs/common';
 import { CreateShipmentDto } from './dto/create-shipment.dto';
@@ -33,6 +34,31 @@ export class ShipmentController {
         res.status(400).json({
           error: 'Shipment not created',
           message: 'An error occurred, the shipment could not be created',
+        });
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  @Admin()
+  @Put(':id')
+  async edit(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() shipmentInput: CreateShipmentDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const shipment = await this.shipmentService.update(shipmentInput, id);
+      if (shipment) {
+        res.status(200).json({
+          shipment,
+          message: 'Shipment updated successfully',
+        });
+      } else {
+        res.status(400).json({
+          error: 'Shipment not modified',
+          message: 'An error occurred, the shipment could not be updated',
         });
       }
     } catch (e) {
