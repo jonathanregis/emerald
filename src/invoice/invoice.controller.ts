@@ -67,7 +67,7 @@ export class InvoiceController {
     @Req() req: Request,
   ) {
     const invoices = await this.invoiceService.findByShipment(shipmentId);
-    return invoices || [];
+    return { invoices: invoices || [] };
   }
 
   @Public()
