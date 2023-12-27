@@ -100,6 +100,18 @@ export class InvoiceService {
     });
   }
 
+  async findByShipment(shipmentId: number) {
+    const invoices = await Invoice.findAll({
+      where: { shipmentId },
+      include: ['items', 'transactions'],
+    });
+    return invoices.map((invoice) => {
+      const _invoice = invoice.toJSON();
+      delete _invoice.transactions;
+      return _invoice;
+    });
+  }
+
   async remove(id: number) {
     return await Invoice.destroy({
       where: { id },

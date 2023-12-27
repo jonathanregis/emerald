@@ -60,6 +60,16 @@ export class InvoiceController {
     }
   }
 
+  @Get('shipment/:shipmentId')
+  async getShipmentInvoices(
+    @Param('shipmentId', ParseIntPipe) shipmentId: number,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const invoices = await this.invoiceService.findByShipment(shipmentId);
+    return invoices || [];
+  }
+
   @Public()
   @Get('download/:id')
   async downloadPDF(

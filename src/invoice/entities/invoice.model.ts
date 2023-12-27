@@ -1,6 +1,4 @@
-import { ApplicationConfig } from '@nestjs/core';
 import { hashSync } from 'bcrypt';
-import { VIRTUAL } from 'sequelize';
 import {
   BelongsTo,
   Column,
@@ -11,7 +9,6 @@ import {
   Model,
   HasMany,
 } from 'sequelize-typescript';
-import { server } from 'src/main';
 import { Item } from 'src/shipment/item.model';
 import { Shipment } from 'src/shipment/shipment.model';
 import { Transaction } from 'src/transaction/entities/transaction.entity';
